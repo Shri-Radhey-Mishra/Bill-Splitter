@@ -3,6 +3,7 @@ import '../widgets/step1_setup.dart';
 import '../widgets/step2_people_input.dart';
 import '../widgets/step2_5_select_people.dart';
 import '../widgets/step3_result.dart';
+import '../app_colors.dart'; // Make sure you import this for purple100
 
 class HomeFlow extends StatefulWidget {
   const HomeFlow({super.key});
@@ -62,6 +63,19 @@ class _HomeFlowState extends State<HomeFlow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Bill Splitter',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: purple100,
+          ),
+        ),
+      ),
       body: Center(
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
@@ -115,7 +129,8 @@ class _HomeFlowState extends State<HomeFlow> {
             3 => Step3Result(
               key: const ValueKey(3),
               transactions: results,
-              onBack: () => setState(() => currentStep = 2), onStartOver: () => setState(() => currentStep = 1),
+              onBack: () => setState(() => currentStep = 2),
+              onStartOver: () => setState(() => currentStep = 0),
             ),
             _ => const SizedBox(),
           },
