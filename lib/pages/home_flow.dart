@@ -13,7 +13,7 @@ class HomeFlow extends StatefulWidget {
 
 class _HomeFlowState extends State<HomeFlow> {
   int currentStep = 0;
-  int numPeople = 2;
+  int numPeople = 1;
   double totalAmount = 0.0;
 
   final List<TextEditingController> nameControllers = [];
@@ -99,8 +99,11 @@ class _HomeFlowState extends State<HomeFlow> {
               selectedIndices: selectedPeople,
               onToggle: (i) {
                 setState(() {
-                  if (selectedPeople.contains(i)) selectedPeople.remove(i);
-                  else selectedPeople.add(i);
+                  if (selectedPeople.contains(i)) {
+                    selectedPeople.remove(i);
+                  } else {
+                    selectedPeople.add(i);
+                  }
                 });
               },
               onBack: () => setState(() => currentStep = 1),
@@ -112,7 +115,7 @@ class _HomeFlowState extends State<HomeFlow> {
             3 => Step3Result(
               key: const ValueKey(3),
               transactions: results,
-              onBack: () => setState(() => currentStep = 2),
+              onBack: () => setState(() => currentStep = 2), onStartOver: () => setState(() => currentStep = 1),
             ),
             _ => const SizedBox(),
           },
