@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
-import 'pages/expense_input_page.dart';
+import 'pages/home_flow.dart';
 
-void main() => runApp(ExpenseSplitterApp());
+void main() => runApp(const ExpenseSplitterApp());
 
 class ExpenseSplitterApp extends StatelessWidget {
   const ExpenseSplitterApp({super.key});
@@ -14,15 +14,11 @@ class ExpenseSplitterApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: light90,
         primaryColor: purple100,
-        textTheme: TextTheme(
-          bodyLarge: TextStyle(color: dark100, fontSize: 16),
-          bodyMedium: TextStyle(color: purple200),
-        ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: purple10,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
           ),
         ),
@@ -30,15 +26,14 @@ class ExpenseSplitterApp extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: purple100,
             foregroundColor: light100,
-            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            textStyle: TextStyle(fontWeight: FontWeight.bold),
+            textStyle: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
       ),
-      home: ExpenseInputPage(),
+      home: const HomeFlow(),
     );
   }
 }
