@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
-import 'pages/home_flow.dart';
+import './pages/home_flow.dart';
 
 void main() => runApp(const ExpenseSplitterApp());
 
@@ -16,7 +16,7 @@ class ExpenseSplitterApp extends StatelessWidget {
         primaryColor: purple100,
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: purple10,
+          fillColor: light100,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,

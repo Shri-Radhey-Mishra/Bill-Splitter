@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../widgets/step1_input_header.dart';
+import '../widgets/step1_setup.dart';
 import '../widgets/step2_people_input.dart';
-import '../widgets/step2_5_selection_filter.dart';
-import '../widgets/step3_result_display.dart';
+import '../widgets/step2_5_select_people.dart';
+import '../widgets/step3_result.dart';
 
 class HomeFlow extends StatefulWidget {
   const HomeFlow({super.key});
@@ -12,113 +12,111 @@ class HomeFlow extends StatefulWidget {
 }
 
 class _HomeFlowState extends State<HomeFlow> {
-  int step = 1;
-  int numPeople = 1;
-  double totalAmount = 0;
+  int currentStep = 0;
+  int numPeople = 2;
+  double totalAmount = 0.0;
 
-  final List<TextEditingController> _nameControllers = [];
-  final List<TextEditingController> _amountControllers = [];
-  List<String> transactions = [];
-  Set<int> selectedSplitIndices = {};
+  final List<TextEditingController> nameControllers = [];
+  final List<TextEditingController> amountControllers = [];
 
-  void goToStep2() {
-    _nameControllers.clear();
-    _amountControllers.clear();
-    for (int i = 0; i < numPeople; i++) {
-      _nameControllers.add(TextEditingController());
-      _amountControllers.add(TextEditingController());
-    }
-    setState(() => step = 2);
-  }
+  List<String> get names => nameControllers.map((c) => c.text.trim()).toList();
+  List<double> get amounts => amountControllers.map((c) => double.tryParse(c.text.trim()) ?? 0).toList();
 
-  void goToStep2_5() {
-    selectedSplitIndices = {for (var i = 0; i < numPeople; i++) i}; // All selected
-    setState(() => step = 25);
-  }
+  Set<int> selectedPeople = {};
+  List<(String, String, double)> results = [];
 
-  void calculateAndGoToStep3() {
-    final names = _nameControllers.map((c) => c.text).toList();
-    final contributions = _amountControllers.map((c) => double.tryParse(c.text) ?? 0.0).toList();
+  void calculateResult() {
+    final selectedNames = selectedPeople.map((i) => names[i]).toList();
+    final selectedAmounts = selectedPeople.map((i) => amounts[i]).toList();
 
-    final includedIndices = selectedSplitIndices.toList();
-    final equalShare = totalAmount / includedIndices.length;
+    final equalShare = selectedAmounts.reduce((a, b) => a + b) / selectedNames.length;
+    final balances = selectedAmounts.map((amt) => amt - equalShare).toList();
 
-    final balances = List.generate(names.length, (i) => 0.0);
-    for (int i = 0; i < names.length; i++) {
-      balances[i] = contributions[i] - (includedIndices.contains(i) ? equalShare : 0);
+    final creditors = <(int, double)>[];
+    final debtors = <(int, double)>[];
+
+    for (var i = 0; i < balances.length; i++) {
+      if (balances[i] > 0) creditors.add((i, balances[i]));
+      if (balances[i] < 0) debtors.add((i, -balances[i]));
     }
 
-    final creditors = <Map<String, dynamic>>[];
-    final debtors = <Map<String, dynamic>>[];
+    final transactions = <(String, String, double)>[];
+    int di = 0, ci = 0;
+    while (di < debtors.length && ci < creditors.length) {
+      final (dIdx, debtAmt) = debtors[di];
+      final (cIdx, credAmt) = creditors[ci];
+      final payment = debtAmt < credAmt ? debtAmt : credAmt;
 
-    for (int i = 0; i < balances.length; i++) {
-      if (balances[i] > 0) {
-        creditors.add({'index': i, 'amount': balances[i]});
-      } else if (balances[i] < 0) {
-        debtors.add({'index': i, 'amount': -balances[i]});
-      }
+      transactions.add((selectedNames[dIdx], selectedNames[cIdx], double.parse(payment.toStringAsFixed(2))));
+
+      debtors[di] = (dIdx, debtAmt - payment);
+      creditors[ci] = (cIdx, credAmt - payment);
+
+      if (debtors[di].$2 == 0) di++;
+      if (creditors[ci].$2 == 0) ci++;
     }
 
-    int i = 0, j = 0;
-    final result = <String>[];
-
-    while (i < debtors.length && j < creditors.length) {
-      var debtor = debtors[i];
-      var creditor = creditors[j];
-      double payment = debtor['amount'] < creditor['amount'] ? debtor['amount'] : creditor['amount'];
-
-      result.add("${names[debtor['index']]} pays ${names[creditor['index']]}: ₹${payment.toStringAsFixed(2)}");
-
-      debtor['amount'] -= payment;
-      creditor['amount'] -= payment;
-
-      if (debtor['amount'] == 0) i++;
-      if (creditor['amount'] == 0) j++;
-    }
-
-    setState(() {
-      transactions = result;
-      step = 3;
-    });
+    results = transactions;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Expense Splitter")),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: step == 1
-            ? Step1InputHeader(
-          numPeople: numPeople,
-          totalAmount: totalAmount,
-          onNumChanged: (val) => setState(() => numPeople = val),
-          onAmountChanged: (val) => setState(() => totalAmount = val),
-          onNext: goToStep2,
-        )
-            : step == 2
-            ? Step2PeopleInput(
-          numPeople: numPeople,
-          nameControllers: _nameControllers,
-          amountControllers: _amountControllers,
-          onSubmit: goToStep2_5,
-        )
-            : step == 25
-            ? SplitSelectorStep(
-          names: _nameControllers.map((c) => c.text).toList(),
-          selectedIndices: selectedSplitIndices,
-          onToggle: (index) {
-            setState(() {
-              if (selectedSplitIndices.contains(index)) {
-                selectedSplitIndices.remove(index);
-              } else {
-                selectedSplitIndices.add(index);
-              }
-            });
+      body: Center(
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: switch (currentStep) {
+            0 => Step1Setup(
+              key: const ValueKey(0),
+              numPeople: numPeople,
+              totalAmount: totalAmount,
+              onNumPeopleChanged: (val) => setState(() => numPeople = val),
+              onTotalAmountChanged: (val) => setState(() => totalAmount = val),
+              onNext: () {
+                nameControllers.clear();
+                amountControllers.clear();
+                for (var i = 0; i < numPeople; i++) {
+                  nameControllers.add(TextEditingController());
+                  amountControllers.add(TextEditingController());
+                }
+                setState(() => currentStep = 1);
+              },
+            ),
+            1 => Step2PeopleInput(
+              key: const ValueKey(1),
+              numPeople: numPeople,
+              nameControllers: nameControllers,
+              amountControllers: amountControllers,
+              onBack: () => setState(() => currentStep = 0),
+              onSubmit: () {
+                selectedPeople = {for (var i = 0; i < numPeople; i++) i};
+                setState(() => currentStep = 2);
+              },
+            ),
+            2 => Step2_5SelectPeople(
+              key: const ValueKey(2),
+              names: names,
+              selectedIndices: selectedPeople,
+              onToggle: (i) {
+                setState(() {
+                  if (selectedPeople.contains(i)) selectedPeople.remove(i);
+                  else selectedPeople.add(i);
+                });
+              },
+              onBack: () => setState(() => currentStep = 1),
+              onNext: () {
+                calculateResult();
+                setState(() => currentStep = 3);
+              },
+            ),
+            3 => Step3Result(
+              key: const ValueKey(3),
+              transactions: results,
+              onBack: () => setState(() => currentStep = 2),
+            ),
+            _ => const SizedBox(),
           },
-          onContinue: calculateAndGoToStep3,
-        )
-            : Step3ResultDisplay(transactions: transactions),
+        ),
       ),
     );
   }
