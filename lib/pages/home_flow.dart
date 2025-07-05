@@ -4,7 +4,7 @@ import '../widgets/step1_setup.dart';
 import '../widgets/step2_people_input.dart';
 import '../widgets/step2_5_select_people.dart';
 import '../widgets/step3_result.dart';
-import '../app_colors.dart'; // Make sure you import this for purple100
+import '../app_colors.dart';
 
 class HomeFlow extends StatefulWidget {
   const HomeFlow({super.key});
@@ -21,8 +21,10 @@ class _HomeFlowState extends State<HomeFlow> {
   final List<TextEditingController> nameControllers = [];
   final List<TextEditingController> amountControllers = [];
 
-  List<String> get names => nameControllers.map((c) => c.text.trim()).toList();
-  List<double> get amounts => amountControllers.map((c) => double.tryParse(c.text.trim()) ?? 0).toList();
+  List<String> get names =>
+      nameControllers.map((c) => c.text.trim()).toList();
+  List<double> get amounts =>
+      amountControllers.map((c) => double.tryParse(c.text.trim()) ?? 0).toList();
 
   Set<int> selectedPeople = {};
   List<(String, String, double)> results = [];
@@ -31,8 +33,10 @@ class _HomeFlowState extends State<HomeFlow> {
     final selectedNames = selectedPeople.map((i) => names[i]).toList();
     final selectedAmounts = selectedPeople.map((i) => amounts[i]).toList();
 
-    final equalShare = selectedAmounts.reduce((a, b) => a + b) / selectedNames.length;
-    final balances = selectedAmounts.map((amt) => amt - equalShare).toList();
+    final equalShare =
+        selectedAmounts.reduce((a, b) => a + b) / selectedNames.length;
+    final balances =
+    selectedAmounts.map((amt) => amt - equalShare).toList();
 
     final creditors = <(int, double)>[];
     final debtors = <(int, double)>[];
@@ -49,7 +53,11 @@ class _HomeFlowState extends State<HomeFlow> {
       final (cIdx, credAmt) = creditors[ci];
       final payment = debtAmt < credAmt ? debtAmt : credAmt;
 
-      transactions.add((selectedNames[dIdx], selectedNames[cIdx], double.parse(payment.toStringAsFixed(2))));
+      transactions.add((
+      selectedNames[dIdx],
+      selectedNames[cIdx],
+      double.parse(payment.toStringAsFixed(2)),
+      ));
 
       debtors[di] = (dIdx, debtAmt - payment);
       creditors[ci] = (cIdx, credAmt - payment);
@@ -59,6 +67,28 @@ class _HomeFlowState extends State<HomeFlow> {
     }
 
     results = transactions;
+  }
+
+  Future<void> goToStep3() async {
+    setState(() => currentStep = 999); // Show loading spinner
+    await Future.delayed(const Duration(milliseconds: 50));
+
+    calculateResult();
+    setState(() => currentStep = 3);
+
+    // Save split to MongoDB in background (non-blocking)
+    ApiService.saveSplit({
+      'people': names,
+      'amounts': amounts,
+      'selectedIndices': selectedPeople.toList(),
+      'transactions': results.map((t) => {
+        'from': t.$1,
+        'to': t.$2,
+        'amount': t.$3,
+      }).toList(),
+    }).catchError((e) {
+      debugPrint("Failed to save split: $e");
+    });
   }
 
   @override
@@ -85,8 +115,10 @@ class _HomeFlowState extends State<HomeFlow> {
               key: const ValueKey(0),
               numPeople: numPeople,
               totalAmount: totalAmount,
-              onNumPeopleChanged: (val) => setState(() => numPeople = val),
-              onTotalAmountChanged: (val) => setState(() => totalAmount = val),
+              onNumPeopleChanged: (val) =>
+                  setState(() => numPeople = val),
+              onTotalAmountChanged: (val) =>
+                  setState(() => totalAmount = val),
               onNext: () {
                 nameControllers.clear();
                 amountControllers.clear();
@@ -104,7 +136,9 @@ class _HomeFlowState extends State<HomeFlow> {
               amountControllers: amountControllers,
               onBack: () => setState(() => currentStep = 0),
               onSubmit: () {
-                selectedPeople = {for (var i = 0; i < numPeople; i++) i};
+                selectedPeople = {
+                  for (var i = 0; i < numPeople; i++) i
+                };
                 setState(() => currentStep = 2);
               },
             ),
@@ -122,26 +156,17 @@ class _HomeFlowState extends State<HomeFlow> {
                 });
               },
               onBack: () => setState(() => currentStep = 1),
-              onNext: () async {
-                calculateResult();
-                await ApiService.saveSplit({
-                  'people': names,
-                  'amounts': amounts,
-                  'selectedIndices': selectedPeople.toList(),
-                  'transactions': results.map((t) => {
-                    'from': t.$1,
-                    'to': t.$2,
-                    'amount': t.$3,
-                  }).toList(),
-                });
-                setState(() => currentStep = 3);
-              },
+              onNext: goToStep3,
             ),
             3 => Step3Result(
               key: const ValueKey(3),
               transactions: results,
               onBack: () => setState(() => currentStep = 2),
               onStartOver: () => setState(() => currentStep = 0),
+            ),
+            999 => const Center(
+              key: ValueKey(999),
+              child: CircularProgressIndicator(color: purple100),
             ),
             _ => const SizedBox(),
           },

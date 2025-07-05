@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../app_colors.dart';
+import '../services/pdf_service.dart';
 
 class Step3Result extends StatelessWidget {
   final List<(String, String, double)> transactions;
@@ -89,22 +90,31 @@ class Step3Result extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: light40,
                       foregroundColor: dark100,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
                     child: const Text("Back"),
                   ),
+
+                  ElevatedButton(
+                    onPressed: () => PdfService.generateAndOpenPdf(transactions),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: purple100,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    ),
+                    child: const Text("View PDF"),
+                  ),
+
+
                   ElevatedButton(
                     onPressed: onStartOver,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: red100,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
                     child: const Text("Go to Start"),
                   ),

@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:5000/api/splits';
+  static const String baseUrl = 'http://192.168.56.1:5000/api/splits';
 
   static Future<void> saveSplit(Map<String, dynamic> data) async {
     final url = Uri.parse('$baseUrl/create');
