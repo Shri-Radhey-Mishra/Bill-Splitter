@@ -22,18 +22,20 @@ class Step2PeopleInput extends StatelessWidget {
     return Align(
       alignment: const Alignment(0, -0.3),
       child: Card(
-        elevation: 8,
-        color: light100,
+        elevation: 6,
+        color: purple20,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: purple100, width: 2),
         ),
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Enter Contributions', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: purple100)),
+              Text(
+                'Enter Contributions',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: dark100),
+              ),
               const SizedBox(height: 16),
               ...List.generate(numPeople, (i) {
                 return Padding(
@@ -45,8 +47,17 @@ class Step2PeopleInput extends StatelessWidget {
                           controller: nameControllers[i],
                           decoration: InputDecoration(
                             hintText: 'Name ${i + 1}',
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                            focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: purple100, width: 2), borderRadius: BorderRadius.circular(12)),
+                            hintStyle: TextStyle(color: dark100.withOpacity(0.5)),
+                            fillColor: light100,
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: purple100, width: 2),
+                            ),
                           ),
                         ),
                       ),
@@ -58,8 +69,17 @@ class Step2PeopleInput extends StatelessWidget {
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             hintText: 'Amount',
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                            focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: purple100, width: 2), borderRadius: BorderRadius.circular(12)),
+                            hintStyle: TextStyle(color: dark100.withOpacity(0.5)),
+                            fillColor: light100,
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: purple100, width: 2),
+                            ),
                           ),
                         ),
                       ),
@@ -71,8 +91,26 @@ class Step2PeopleInput extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(onPressed: onBack, child: const Text('Back')),
-                  ElevatedButton(onPressed: onSubmit, child: const Text('Next')),
+                  ElevatedButton(
+                    onPressed: onBack,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: light40,
+                      foregroundColor: dark100,
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Back'),
+                  ),
+                  ElevatedButton(
+                    onPressed: onSubmit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: purple100,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Next'),
+                  ),
                 ],
               )
             ],
