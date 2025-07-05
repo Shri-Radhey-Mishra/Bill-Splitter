@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
 import '../widgets/step1_setup.dart';
 import '../widgets/step2_people_input.dart';
 import '../widgets/step2_5_select_people.dart';
@@ -121,8 +122,18 @@ class _HomeFlowState extends State<HomeFlow> {
                 });
               },
               onBack: () => setState(() => currentStep = 1),
-              onNext: () {
+              onNext: () async {
                 calculateResult();
+                await ApiService.saveSplit({
+                  'people': names,
+                  'amounts': amounts,
+                  'selectedIndices': selectedPeople.toList(),
+                  'transactions': results.map((t) => {
+                    'from': t.$1,
+                    'to': t.$2,
+                    'amount': t.$3,
+                  }).toList(),
+                });
                 setState(() => currentStep = 3);
               },
             ),

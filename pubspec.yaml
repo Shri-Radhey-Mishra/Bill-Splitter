@@ -8,6 +8,7 @@ environment:
   sdk: ^3.8.1
 
 dependencies:
+  http: ^0.13.6
   flutter:
     sdk: flutter
   animations: ^2.0.7
