@@ -98,7 +98,7 @@ class _HomeFlowState extends State<HomeFlow> {
         elevation: 0,
         centerTitle: true,
         title: const Text(
-          '💸 Bill Splitter',
+          'Expense Splitter',
           style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.bold,

@@ -94,7 +94,11 @@ class _Step2PeopleInputState extends State<Step2PeopleInput> {
             children: [
               Text(
                 'Enter Contributions',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: dark100),
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: dark100,
+                ),
               ),
               const SizedBox(height: 16),
               ...List.generate(widget.numPeople, (i) {
@@ -108,8 +112,8 @@ class _Step2PeopleInputState extends State<Step2PeopleInput> {
                           decoration: InputDecoration(
                             hintText: 'Name ${i + 1}',
                             hintStyle: TextStyle(color: dark100.withOpacity(0.5)),
-                            fillColor: light100,
                             filled: true,
+                            fillColor: light100,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
@@ -130,8 +134,8 @@ class _Step2PeopleInputState extends State<Step2PeopleInput> {
                           decoration: InputDecoration(
                             hintText: 'Amount',
                             hintStyle: TextStyle(color: dark100.withOpacity(0.5)),
-                            fillColor: light100,
                             filled: true,
+                            fillColor: light100,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
@@ -157,7 +161,9 @@ class _Step2PeopleInputState extends State<Step2PeopleInput> {
                       backgroundColor: light40,
                       foregroundColor: dark100,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: const Text('Back'),
                   ),
@@ -167,7 +173,9 @@ class _Step2PeopleInputState extends State<Step2PeopleInput> {
                       backgroundColor: isValid ? purple100 : Colors.grey,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: const Text('Next'),
                   ),

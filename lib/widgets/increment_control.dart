@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class IncrementControl extends StatefulWidget {
   final String label;
-  final void Function(int, String) onNext;
+  final void Function(int) onNext;
 
   const IncrementControl({
     required this.label,
@@ -16,8 +16,7 @@ class IncrementControl extends StatefulWidget {
 
 class _IncrementControlState extends State<IncrementControl> {
   int value = 0;
-  final TextEditingController _valueController = TextEditingController();
-  final TextEditingController _groupController = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   void _updateValue(String input) {
     final parsed = int.tryParse(input);
@@ -34,44 +33,17 @@ class _IncrementControlState extends State<IncrementControl> {
 
   @override
   void dispose() {
-    _valueController.dispose();
-    _groupController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isValid = value > 0 && _groupController.text.trim().isNotEmpty;
+    final isValid = value > 0;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ✅ New: Group name input
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF6F2FF),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: TextField(
-            controller: _groupController,
-            decoration: const InputDecoration(
-              labelText: 'Group Name',
-              hintText: 'e.g. Goa Trip',
-              border: OutlineInputBorder(),
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-
-        // ✅ Existing: Value incrementer
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
@@ -102,7 +74,7 @@ class _IncrementControlState extends State<IncrementControl> {
                     ? () {
                   setState(() {
                     value = value - 1;
-                    _valueController.text = value.toString();
+                    _controller.text = value.toString();
                   });
                 }
                     : null,
@@ -110,7 +82,7 @@ class _IncrementControlState extends State<IncrementControl> {
               SizedBox(
                 width: 50,
                 child: TextField(
-                  controller: _valueController,
+                  controller: _controller,
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
                   decoration: const InputDecoration(
@@ -126,16 +98,14 @@ class _IncrementControlState extends State<IncrementControl> {
                 onPressed: () {
                   setState(() {
                     value = value + 1;
-                    _valueController.text = value.toString();
+                    _controller.text = value.toString();
                   });
                 },
               ),
             ],
           ),
         ),
-
         const SizedBox(height: 24),
-
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: isValid ? const Color(0xFF9B5DE5) : Colors.grey,
@@ -143,9 +113,7 @@ class _IncrementControlState extends State<IncrementControl> {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          onPressed: isValid
-              ? () => widget.onNext(value, _groupController.text.trim())
-              : null,
+          onPressed: isValid ? () => widget.onNext(value) : null,
           child: const Text('Next'),
         ),
       ],
