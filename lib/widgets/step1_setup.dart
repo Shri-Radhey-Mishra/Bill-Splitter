@@ -62,7 +62,10 @@ class Step1Setup extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Text('$numPeople', style: const TextStyle(fontSize: 18, color: dark100)),
+                        child: Text(
+                          '$numPeople',
+                          style: const TextStyle(fontSize: 18, color: dark100),
+                        ),
                       ),
                       ElevatedButton(
                         onPressed: () => onNumPeopleChanged(numPeople + 1),
@@ -80,6 +83,7 @@ class Step1Setup extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               TextFormField(
+                initialValue: totalAmount == 0.0 ? '' : totalAmount.toString(),
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   hintText: 'Total Amount',
