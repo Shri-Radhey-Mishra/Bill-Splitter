@@ -85,57 +85,54 @@ class _IncrementControlState extends State<IncrementControl> {
               ),
             ],
           ),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                Flexible(
-                  child: Text(
-                    widget.label,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  widget.label,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.remove_circle_outline),
-                  color: const Color(0xFF9B5DE5),
-                  onPressed: value > 0
-                      ? () {
-                    setState(() {
-                      value = value - 1;
-                      _valueController.text = value.toString();
-                    });
-                  }
-                      : null,
-                ),
-                SizedBox(
-                  width: 50,
-                  child: TextField(
-                    controller: _valueController,
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.center,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      isDense: true,
-                    ),
-                    onChanged: _updateValue,
+              ),
+              IconButton(
+                icon: const Icon(Icons.remove_circle_outline),
+                color: const Color(0xFF9B5DE5),
+                onPressed: value > 0
+                    ? () {
+                  setState(() {
+                    value = value - 1;
+                    _valueController.text = value.toString();
+                  });
+                }
+                    : null,
+              ),
+              SizedBox(
+                width: 50,
+                child: TextField(
+                  controller: _valueController,
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    isDense: true,
                   ),
+                  onChanged: _updateValue,
                 ),
-                IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  color: const Color(0xFF9B5DE5),
-                  onPressed: () {
-                    setState(() {
-                      value = value + 1;
-                      _valueController.text = value.toString();
-                    });
-                  },
-                ),
-              ],
-            ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add_circle_outline),
+                color: const Color(0xFF9B5DE5),
+                onPressed: () {
+                  setState(() {
+                    value = value + 1;
+                    _valueController.text = value.toString();
+                  });
+                },
+              ),
+            ],
           ),
         ),
 

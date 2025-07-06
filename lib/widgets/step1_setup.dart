@@ -8,7 +8,7 @@ class Step1Setup extends StatefulWidget {
   final ValueChanged<double> onTotalAmountChanged;
   final VoidCallback onNext;
 
-  // 👇 New: Added optional onGroupNameChanged to match your friend's setup
+  // Optional callback for group name — safe for your flow
   final ValueChanged<String>? onGroupNameChanged;
 
   const Step1Setup({
@@ -78,17 +78,21 @@ class _Step1SetupState extends State<Step1Setup> {
                   }
                 },
               ),
+
               const SizedBox(height: 20),
 
-              // ✅ Number of People
+              // ✅ Number of People — SAFE VERSION
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Number of People:',
-                    style: TextStyle(fontSize: 18, color: dark100),
+                  const Expanded(
+                    child: Text(
+                      'Number of People:',
+                      style: TextStyle(fontSize: 18, color: dark100),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       ElevatedButton(
                         onPressed: widget.numPeople > 2
@@ -103,7 +107,7 @@ class _Step1SetupState extends State<Step1Setup> {
                         child: const Icon(Icons.remove, size: 20),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Text(
                           '${widget.numPeople}',
                           style: const TextStyle(fontSize: 18, color: dark100),
@@ -120,7 +124,7 @@ class _Step1SetupState extends State<Step1Setup> {
                         child: const Icon(Icons.add, size: 20),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
 
