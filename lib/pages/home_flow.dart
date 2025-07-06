@@ -21,8 +21,7 @@ class _HomeFlowState extends State<HomeFlow> {
   final List<TextEditingController> nameControllers = [];
   final List<TextEditingController> amountControllers = [];
 
-  List<String> get names =>
-      nameControllers.map((c) => c.text.trim()).toList();
+  List<String> get names => nameControllers.map((c) => c.text.trim()).toList();
   List<double> get amounts =>
       amountControllers.map((c) => double.tryParse(c.text.trim()) ?? 0).toList();
 
@@ -35,8 +34,7 @@ class _HomeFlowState extends State<HomeFlow> {
 
     final equalShare =
         selectedAmounts.reduce((a, b) => a + b) / selectedNames.length;
-    final balances =
-    selectedAmounts.map((amt) => amt - equalShare).toList();
+    final balances = selectedAmounts.map((amt) => amt - equalShare).toList();
 
     final creditors = <(int, double)>[];
     final debtors = <(int, double)>[];
@@ -70,13 +68,13 @@ class _HomeFlowState extends State<HomeFlow> {
   }
 
   Future<void> goToStep3() async {
-    setState(() => currentStep = 999); // Show loading spinner
+    setState(() => currentStep = 999); // loading
     await Future.delayed(const Duration(milliseconds: 50));
 
     calculateResult();
     setState(() => currentStep = 3);
 
-    // Save split to MongoDB in background (non-blocking)
+    // Background save
     ApiService.saveSplit({
       'people': names,
       'amounts': amounts,
@@ -94,82 +92,113 @@ class _HomeFlowState extends State<HomeFlow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: true,
         title: const Text(
-          'Bill Splitter',
+          '💸 Bill Splitter',
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 26,
             fontWeight: FontWeight.bold,
-            color: purple100,
+            color: Colors.white,
           ),
         ),
       ),
-      body: Center(
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          child: switch (currentStep) {
-            0 => Step1Setup(
-              key: const ValueKey(0),
-              numPeople: numPeople,
-              totalAmount: totalAmount,
-              onNumPeopleChanged: (val) =>
-                  setState(() => numPeople = val),
-              onTotalAmountChanged: (val) =>
-                  setState(() => totalAmount = val),
-              onNext: () {
-                nameControllers.clear();
-                amountControllers.clear();
-                for (var i = 0; i < numPeople; i++) {
-                  nameControllers.add(TextEditingController());
-                  amountControllers.add(TextEditingController());
-                }
-                setState(() => currentStep = 1);
-              },
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFB993D6), Color(0xFF8CA6DB)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg_pattern.png'),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              Colors.white.withOpacity(0.1),
+              BlendMode.dstATop,
             ),
-            1 => Step2PeopleInput(
-              key: const ValueKey(1),
-              numPeople: numPeople,
-              nameControllers: nameControllers,
-              amountControllers: amountControllers,
-              onBack: () => setState(() => currentStep = 0),
-              onSubmit: () {
-                selectedPeople = {
-                  for (var i = 0; i < numPeople; i++) i
-                };
-                setState(() => currentStep = 2);
-              },
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 400),
+              child: Container(
+                key: ValueKey(currentStep),
+                margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 100),
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.95),
+                  borderRadius: BorderRadius.circular(28),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: switch (currentStep) {
+                  0 => Step1Setup(
+                    numPeople: numPeople,
+                    totalAmount: totalAmount,
+                    onNumPeopleChanged: (val) =>
+                        setState(() => numPeople = val),
+                    onTotalAmountChanged: (val) =>
+                        setState(() => totalAmount = val),
+                    onNext: () {
+                      nameControllers.clear();
+                      amountControllers.clear();
+                      for (var i = 0; i < numPeople; i++) {
+                        nameControllers.add(TextEditingController());
+                        amountControllers.add(TextEditingController());
+                      }
+                      setState(() => currentStep = 1);
+                    },
+                  ),
+                  1 => Step2PeopleInput(
+                    numPeople: numPeople,
+                    nameControllers: nameControllers,
+                    amountControllers: amountControllers,
+                    onBack: () => setState(() => currentStep = 0),
+                    onSubmit: () {
+                      selectedPeople = {
+                        for (var i = 0; i < numPeople; i++) i
+                      };
+                      setState(() => currentStep = 2);
+                    },
+                  ),
+                  2 => Step2_5SelectPeople(
+                    names: names,
+                    selectedIndices: selectedPeople,
+                    onToggle: (i) {
+                      setState(() {
+                        if (selectedPeople.contains(i)) {
+                          selectedPeople.remove(i);
+                        } else {
+                          selectedPeople.add(i);
+                        }
+                      });
+                    },
+                    onBack: () => setState(() => currentStep = 1),
+                    onNext: goToStep3,
+                  ),
+                  3 => Step3Result(
+                    transactions: results,
+                    onBack: () => setState(() => currentStep = 2),
+                    onStartOver: () => setState(() => currentStep = 0),
+                  ),
+                  999 => const Center(
+                    child: CircularProgressIndicator(color: purple100),
+                  ),
+                  _ => const SizedBox(),
+                },
+              ),
             ),
-            2 => Step2_5SelectPeople(
-              key: const ValueKey(2),
-              names: names,
-              selectedIndices: selectedPeople,
-              onToggle: (i) {
-                setState(() {
-                  if (selectedPeople.contains(i)) {
-                    selectedPeople.remove(i);
-                  } else {
-                    selectedPeople.add(i);
-                  }
-                });
-              },
-              onBack: () => setState(() => currentStep = 1),
-              onNext: goToStep3,
-            ),
-            3 => Step3Result(
-              key: const ValueKey(3),
-              transactions: results,
-              onBack: () => setState(() => currentStep = 2),
-              onStartOver: () => setState(() => currentStep = 0),
-            ),
-            999 => const Center(
-              key: ValueKey(999),
-              child: CircularProgressIndicator(color: purple100),
-            ),
-            _ => const SizedBox(),
-          },
+          ),
         ),
       ),
     );
