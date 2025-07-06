@@ -39,10 +39,10 @@ class Step3Result extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Transaction list
+              // 🧾 Transaction list
               ...transactions.map((t) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 6),
                   child: RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
@@ -77,13 +77,15 @@ class Step3Result extends StatelessWidget {
                     ),
                   ),
                 );
-              }),
+              }).toList(),
 
               const SizedBox(height: 24),
 
-              // Buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // ✅ Responsive Button Layout using Wrap
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                alignment: WrapAlignment.center,
                 children: [
                   ElevatedButton(
                     onPressed: onBack,
@@ -91,29 +93,33 @@ class Step3Result extends StatelessWidget {
                       backgroundColor: light40,
                       foregroundColor: dark100,
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
                     child: const Text("Back"),
                   ),
-
                   ElevatedButton(
                     onPressed: () => PdfService.generateAndOpenPdf(transactions),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: purple100,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
                     child: const Text("View PDF"),
                   ),
-
                   ElevatedButton(
                     onPressed: onStartOver,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: red100,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
                     child: const Text("Go to Start"),
                   ),

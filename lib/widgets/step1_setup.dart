@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import '../app_colors.dart';
 
-class Step1Setup extends StatelessWidget {
+class Step1Setup extends StatefulWidget {
   final int numPeople;
   final double totalAmount;
   final ValueChanged<int> onNumPeopleChanged;
   final ValueChanged<double> onTotalAmountChanged;
   final VoidCallback onNext;
+
+  // 👇 New: Added optional onGroupNameChanged to match your friend's setup
+  final ValueChanged<String>? onGroupNameChanged;
 
   const Step1Setup({
     super.key,
@@ -15,7 +18,17 @@ class Step1Setup extends StatelessWidget {
     required this.onNumPeopleChanged,
     required this.onTotalAmountChanged,
     required this.onNext,
+    this.onGroupNameChanged,
   });
+
+  @override
+  State<Step1Setup> createState() => _Step1SetupState();
+}
+
+class _Step1SetupState extends State<Step1Setup> {
+  String groupName = '';
+
+  bool get isValid => widget.totalAmount > 0 && groupName.trim().isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +54,33 @@ class Step1Setup extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+
+              // ✅ Group Name Input
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'Group Name',
+                  hintStyle: TextStyle(color: dark100.withOpacity(0.5)),
+                  fillColor: light100,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: purple100, width: 2),
+                  ),
+                ),
+                onChanged: (v) {
+                  setState(() => groupName = v);
+                  if (widget.onGroupNameChanged != null) {
+                    widget.onGroupNameChanged!(v);
+                  }
+                },
+              ),
+              const SizedBox(height: 20),
+
+              // ✅ Number of People
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -51,7 +91,9 @@ class Step1Setup extends StatelessWidget {
                   Row(
                     children: [
                       ElevatedButton(
-                        onPressed: numPeople > 2 ? () => onNumPeopleChanged(numPeople - 1) : null,
+                        onPressed: widget.numPeople > 2
+                            ? () => widget.onNumPeopleChanged(widget.numPeople - 1)
+                            : null,
                         style: ElevatedButton.styleFrom(
                           shape: const CircleBorder(),
                           backgroundColor: purple100,
@@ -63,12 +105,12 @@ class Step1Setup extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Text(
-                          '$numPeople',
+                          '${widget.numPeople}',
                           style: const TextStyle(fontSize: 18, color: dark100),
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () => onNumPeopleChanged(numPeople + 1),
+                        onPressed: () => widget.onNumPeopleChanged(widget.numPeople + 1),
                         style: ElevatedButton.styleFrom(
                           shape: const CircleBorder(),
                           backgroundColor: purple100,
@@ -81,9 +123,12 @@ class Step1Setup extends StatelessWidget {
                   )
                 ],
               ),
+
               const SizedBox(height: 20),
+
+              // ✅ Total Amount Input
               TextFormField(
-                initialValue: totalAmount == 0.0 ? '' : totalAmount.toString(),
+                initialValue: widget.totalAmount == 0.0 ? '' : widget.totalAmount.toString(),
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   hintText: 'Total Amount',
@@ -99,13 +144,16 @@ class Step1Setup extends StatelessWidget {
                     borderSide: const BorderSide(color: purple100, width: 2),
                   ),
                 ),
-                onChanged: (v) => onTotalAmountChanged(double.tryParse(v) ?? 0),
+                onChanged: (v) => widget.onTotalAmountChanged(double.tryParse(v) ?? 0),
               ),
+
               const SizedBox(height: 24),
+
+              // ✅ Next Button
               ElevatedButton(
-                onPressed: onNext,
+                onPressed: isValid ? widget.onNext : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: purple100,
+                  backgroundColor: isValid ? purple100 : Colors.grey,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                   shape: RoundedRectangleBorder(
