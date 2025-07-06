@@ -81,21 +81,20 @@ class _Step1SetupState extends State<Step1Setup> {
 
               const SizedBox(height: 20),
 
-              // ✅ Number of People — SAFE VERSION
-              Row(
+              // ✅ Centered Increment/Decrement Row
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Expanded(
-                    child: Text(
-                      'Number of People:',
-                      style: TextStyle(fontSize: 18, color: dark100),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  const Text(
+                    'Number of People:',
+                    style: TextStyle(fontSize: 18, color: dark100),
                   ),
+                  const SizedBox(height: 10),
                   Row(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        onPressed: widget.numPeople > 2
+                        onPressed: widget.numPeople > 1
                             ? () => widget.onNumPeopleChanged(widget.numPeople - 1)
                             : null,
                         style: ElevatedButton.styleFrom(
