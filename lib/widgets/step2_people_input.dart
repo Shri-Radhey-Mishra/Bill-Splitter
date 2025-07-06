@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../app_colors.dart';
 
-class Step2PeopleInput extends StatelessWidget {
+class Step2PeopleInput extends StatefulWidget {
   final int numPeople;
   final List<TextEditingController> nameControllers;
   final List<TextEditingController> amountControllers;
@@ -16,6 +16,66 @@ class Step2PeopleInput extends StatelessWidget {
     required this.onBack,
     required this.onSubmit,
   });
+
+  @override
+  State<Step2PeopleInput> createState() => _Step2PeopleInputState();
+}
+
+class _Step2PeopleInputState extends State<Step2PeopleInput> {
+  bool isValid = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _addListeners();
+    _validateFields();
+  }
+
+  void _addListeners() {
+    for (var controller in widget.nameControllers) {
+      controller.addListener(_validateFields);
+    }
+    for (var controller in widget.amountControllers) {
+      controller.addListener(_validateFields);
+    }
+  }
+
+  void _validateFields() {
+    bool allValid = true;
+
+    for (var controller in widget.nameControllers) {
+      if (controller.text.trim().isEmpty) {
+        allValid = false;
+        break;
+      }
+    }
+
+    for (var controller in widget.amountControllers) {
+      if (controller.text.trim().isEmpty ||
+          double.tryParse(controller.text.trim()) == null ||
+          double.tryParse(controller.text.trim())! <= 0) {
+        allValid = false;
+        break;
+      }
+    }
+
+    if (isValid != allValid) {
+      setState(() {
+        isValid = allValid;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    for (var controller in widget.nameControllers) {
+      controller.removeListener(_validateFields);
+    }
+    for (var controller in widget.amountControllers) {
+      controller.removeListener(_validateFields);
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +97,14 @@ class Step2PeopleInput extends StatelessWidget {
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: dark100),
               ),
               const SizedBox(height: 16),
-              ...List.generate(numPeople, (i) {
+              ...List.generate(widget.numPeople, (i) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: Row(
                     children: [
                       Expanded(
                         child: TextFormField(
-                          controller: nameControllers[i],
+                          controller: widget.nameControllers[i],
                           decoration: InputDecoration(
                             hintText: 'Name ${i + 1}',
                             hintStyle: TextStyle(color: dark100.withOpacity(0.5)),
@@ -65,7 +125,7 @@ class Step2PeopleInput extends StatelessWidget {
                       SizedBox(
                         width: 100,
                         child: TextFormField(
-                          controller: amountControllers[i],
+                          controller: widget.amountControllers[i],
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             hintText: 'Amount',
@@ -92,7 +152,7 @@ class Step2PeopleInput extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
-                    onPressed: onBack,
+                    onPressed: widget.onBack,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: light40,
                       foregroundColor: dark100,
@@ -102,9 +162,9 @@ class Step2PeopleInput extends StatelessWidget {
                     child: const Text('Back'),
                   ),
                   ElevatedButton(
-                    onPressed: onSubmit,
+                    onPressed: isValid ? widget.onSubmit : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: purple100,
+                      backgroundColor: isValid ? purple100 : Colors.grey,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
