@@ -64,7 +64,7 @@ class Step2_5SelectPeople extends StatelessWidget {
                         width: 1.5,
                       ),
                     ),
-                    checkmarkColor: Colors.transparent, // Hide tick mark
+                    checkmarkColor: Colors.transparent,
                     onSelected: (_) => onToggle(index),
                   );
                 }),
