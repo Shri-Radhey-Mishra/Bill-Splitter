@@ -6,9 +6,12 @@ class Step3Result extends StatelessWidget {
   final List<(String, String, double)> transactions;
   final VoidCallback onBack;
   final VoidCallback onStartOver;
+  final String groupName;
+
 
   const Step3Result({
     super.key,
+    required this.groupName,
     required this.transactions,
     required this.onBack,
     required this.onStartOver,
@@ -40,7 +43,17 @@ class Step3Result extends StatelessWidget {
                     color: dark100,
                   ),
                 ),
+                const SizedBox(height: 8),
+                Text(
+                  groupName,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: dark100.withOpacity(0.7),
+                  ),
+                ),
                 const SizedBox(height: 20),
+
 
                 // 🧾 Transaction list
                 ...transactions.map((t) {
@@ -105,7 +118,7 @@ class Step3Result extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => PdfService.generateAndOpenPdf(transactions),
+                        onPressed: () => PdfService.generateAndOpenPdf(transactions, groupName),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: purple100,
                           foregroundColor: Colors.white,

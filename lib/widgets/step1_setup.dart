@@ -1,3 +1,5 @@
+// ✅ UPDATED FILE: lib/widgets/step1_setup.dart
+
 import 'package:flutter/material.dart';
 import '../app_colors.dart';
 
@@ -80,7 +82,7 @@ class _Step1SetupState extends State<Step1Setup> {
 
                 const SizedBox(height: 20),
 
-                // Number of People Input (centered)
+                // Number of People Input
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [

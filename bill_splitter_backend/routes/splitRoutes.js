@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const Split = require('../models/Split'); // ensure this is your model
+const Split = require('../models/Split');
 
 // POST /api/splits/create
 router.post('/create', async (req, res) => {
   try {
-    const { people, amounts, selectedIndices, transactions } = req.body;
+    const { groupName, people, amounts, selectedIndices, transactions } = req.body;
 
     const newSplit = new Split({
+      groupName,
       people,
       amounts,
       selectedIndices,

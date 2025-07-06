@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const SplitSchema = new mongoose.Schema({
+  groupName: {
+    type: String,
+    required: true,
+  },
   people: [String],
   amounts: [Number],
   selectedIndices: [Number],

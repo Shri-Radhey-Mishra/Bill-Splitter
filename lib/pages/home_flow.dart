@@ -17,11 +17,14 @@ class _HomeFlowState extends State<HomeFlow> {
   int currentStep = 0;
   int numPeople = 1;
   double totalAmount = 0.0;
+  String groupName = '';
 
   final List<TextEditingController> nameControllers = [];
   final List<TextEditingController> amountControllers = [];
 
-  List<String> get names => nameControllers.map((c) => c.text.trim()).toList();
+  List<String> get names =>
+      nameControllers.map((c) => c.text.trim()).toList();
+
   List<double> get amounts =>
       amountControllers.map((c) => double.tryParse(c.text.trim()) ?? 0).toList();
 
@@ -32,8 +35,7 @@ class _HomeFlowState extends State<HomeFlow> {
     final selectedNames = selectedPeople.map((i) => names[i]).toList();
     final selectedAmounts = selectedPeople.map((i) => amounts[i]).toList();
 
-    final equalShare =
-        selectedAmounts.reduce((a, b) => a + b) / selectedNames.length;
+    final equalShare = selectedAmounts.reduce((a, b) => a + b) / selectedNames.length;
     final balances = selectedAmounts.map((amt) => amt - equalShare).toList();
 
     final creditors = <(int, double)>[];
@@ -75,6 +77,7 @@ class _HomeFlowState extends State<HomeFlow> {
     setState(() => currentStep = 3);
 
     ApiService.saveSplit({
+      'groupName': groupName.trim(), // Ensures no trailing/leading spaces
       'people': names,
       'amounts': amounts,
       'selectedIndices': selectedPeople.toList(),
@@ -113,7 +116,7 @@ class _HomeFlowState extends State<HomeFlow> {
             end: Alignment.bottomCenter,
           ),
           image: DecorationImage(
-            image: AssetImage('assets/images/bg_pattern.png'),
+            image: const AssetImage('assets/images/bg_pattern.png'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.white.withOpacity(0.1),
@@ -134,6 +137,7 @@ class _HomeFlowState extends State<HomeFlow> {
                     totalAmount: totalAmount,
                     onNumPeopleChanged: (val) => setState(() => numPeople = val),
                     onTotalAmountChanged: (val) => setState(() => totalAmount = val),
+                    onGroupNameChanged: (val) => setState(() => groupName = val),
                     onNext: () {
                       nameControllers.clear();
                       amountControllers.clear();
@@ -172,6 +176,7 @@ class _HomeFlowState extends State<HomeFlow> {
                     onNext: goToStep3,
                   ),
                   3 => Step3Result(
+                    groupName: groupName,
                     transactions: results,
                     onBack: () => setState(() => currentStep = 2),
                     onStartOver: () => setState(() => currentStep = 0),
