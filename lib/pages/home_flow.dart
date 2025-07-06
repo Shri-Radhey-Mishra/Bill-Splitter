@@ -74,7 +74,6 @@ class _HomeFlowState extends State<HomeFlow> {
     calculateResult();
     setState(() => currentStep = 3);
 
-    // Background save
     ApiService.saveSplit({
       'people': names,
       'amounts': amounts,
@@ -129,26 +128,12 @@ class _HomeFlowState extends State<HomeFlow> {
               child: Container(
                 key: ValueKey(currentStep),
                 margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 100),
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.95),
-                  borderRadius: BorderRadius.circular(28),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
                 child: switch (currentStep) {
                   0 => Step1Setup(
                     numPeople: numPeople,
                     totalAmount: totalAmount,
-                    onNumPeopleChanged: (val) =>
-                        setState(() => numPeople = val),
-                    onTotalAmountChanged: (val) =>
-                        setState(() => totalAmount = val),
+                    onNumPeopleChanged: (val) => setState(() => numPeople = val),
+                    onTotalAmountChanged: (val) => setState(() => totalAmount = val),
                     onNext: () {
                       nameControllers.clear();
                       amountControllers.clear();

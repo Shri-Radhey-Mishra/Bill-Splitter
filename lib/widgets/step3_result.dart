@@ -18,114 +18,124 @@ class Step3Result extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: const Alignment(0, -0.3),
-      child: Card(
-        elevation: 6,
-        color: purple20,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Settlement Summary',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: dark100,
+      child: SizedBox(
+        width: 340,
+        child: Card(
+          elevation: 16,
+          shadowColor: Colors.black.withOpacity(0.25),
+          color: purple20,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Settlement Summary',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: dark100,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-              // 🧾 Transaction list
-              ...transactions.map((t) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      style: const TextStyle(fontSize: 16),
-                      children: [
-                        TextSpan(
-                          text: t.$1,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: red100,
+                // 🧾 Transaction list
+                ...transactions.map((t) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: const TextStyle(fontSize: 16),
+                        children: [
+                          TextSpan(
+                            text: t.$1,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: red100,
+                            ),
                           ),
-                        ),
-                        const TextSpan(
-                          text: ' owes ',
-                          style: TextStyle(color: Colors.black87),
-                        ),
-                        TextSpan(
-                          text: t.$2,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: purple100,
+                          const TextSpan(
+                            text: ' owes ',
+                            style: TextStyle(color: Colors.black87),
                           ),
-                        ),
-                        TextSpan(
-                          text: ' ₹${t.$3.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                          TextSpan(
+                            text: t.$2,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: purple100,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-
-              const SizedBox(height: 24),
-
-              // ✅ Responsive Button Layout using Wrap
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                alignment: WrapAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: onBack,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: light40,
-                      foregroundColor: dark100,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                          TextSpan(
+                            text: ' ₹${t.$3.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: const Text("Back"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => PdfService.generateAndOpenPdf(transactions),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: purple100,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                  );
+                }).toList(),
+
+                const SizedBox(height: 24),
+
+                // ✅ Responsive Single Row Buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: onBack,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: light40,
+                          foregroundColor: dark100,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: const Text("Back"),
                       ),
                     ),
-                    child: const Text("View PDF"),
-                  ),
-                  ElevatedButton(
-                    onPressed: onStartOver,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: red100,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => PdfService.generateAndOpenPdf(transactions),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: purple100,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: const Text("View PDF"),
                       ),
                     ),
-                    child: const Text("Go to Start"),
-                  ),
-                ],
-              ),
-            ],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: onStartOver,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: red100,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: const Text("Go to Start"),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

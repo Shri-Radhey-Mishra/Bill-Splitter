@@ -7,8 +7,6 @@ class Step1Setup extends StatefulWidget {
   final ValueChanged<int> onNumPeopleChanged;
   final ValueChanged<double> onTotalAmountChanged;
   final VoidCallback onNext;
-
-  // Optional callback for group name — safe for your flow
   final ValueChanged<String>? onGroupNameChanged;
 
   const Step1Setup({
@@ -34,138 +32,143 @@ class _Step1SetupState extends State<Step1Setup> {
   Widget build(BuildContext context) {
     return Align(
       alignment: const Alignment(0, -0.3),
-      child: Card(
-        elevation: 6,
-        color: purple20,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Create Group',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: dark100,
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // ✅ Group Name Input
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Group Name',
-                  hintStyle: TextStyle(color: dark100.withOpacity(0.5)),
-                  fillColor: light100,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: purple100, width: 2),
+      child: SizedBox(
+        width: 340,
+        child: Card(
+          elevation: 16,
+          shadowColor: Colors.black.withOpacity(0.25),
+          color: purple20,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Create Group',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: dark100,
                   ),
                 ),
-                onChanged: (v) {
-                  setState(() => groupName = v);
-                  if (widget.onGroupNameChanged != null) {
-                    widget.onGroupNameChanged!(v);
-                  }
-                },
-              ),
+                const SizedBox(height: 20),
 
-              const SizedBox(height: 20),
-
-              // ✅ Centered Increment/Decrement Row
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Number of People:',
-                    style: TextStyle(fontSize: 18, color: dark100),
+                // Group Name Input
+                TextFormField(
+                  decoration: InputDecoration(
+                    hintText: 'Group Name',
+                    hintStyle: TextStyle(color: dark100.withOpacity(0.5)),
+                    fillColor: light100,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: purple100, width: 2),
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: widget.numPeople > 1
-                            ? () => widget.onNumPeopleChanged(widget.numPeople - 1)
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                          shape: const CircleBorder(),
-                          backgroundColor: purple100,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.all(8),
-                        ),
-                        child: const Icon(Icons.remove, size: 20),
+                  onChanged: (v) {
+                    setState(() => groupName = v);
+                    widget.onGroupNameChanged?.call(v);
+                  },
+                ),
+
+                const SizedBox(height: 20),
+
+                // Number of People Input (centered)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Number of People:',
+                        style: TextStyle(fontSize: 18, color: dark100),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          '${widget.numPeople}',
-                          style: const TextStyle(fontSize: 18, color: dark100),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: widget.numPeople > 1
+                              ? () => widget.onNumPeopleChanged(widget.numPeople - 1)
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            backgroundColor: purple100,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.all(8),
+                          ),
+                          child: const Icon(Icons.remove, size: 20),
                         ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () => widget.onNumPeopleChanged(widget.numPeople + 1),
-                        style: ElevatedButton.styleFrom(
-                          shape: const CircleBorder(),
-                          backgroundColor: purple100,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.all(8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            '${widget.numPeople}',
+                            style: const TextStyle(fontSize: 18, color: dark100),
+                          ),
                         ),
-                        child: const Icon(Icons.add, size: 20),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              // ✅ Total Amount Input
-              TextFormField(
-                initialValue: widget.totalAmount == 0.0 ? '' : widget.totalAmount.toString(),
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  hintText: 'Total Amount',
-                  hintStyle: TextStyle(color: dark100.withOpacity(0.5)),
-                  fillColor: light100,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: purple100, width: 2),
-                  ),
+                        ElevatedButton(
+                          onPressed: () => widget.onNumPeopleChanged(widget.numPeople + 1),
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            backgroundColor: purple100,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.all(8),
+                          ),
+                          child: const Icon(Icons.add, size: 20),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                onChanged: (v) => widget.onTotalAmountChanged(double.tryParse(v) ?? 0),
-              ),
 
-              const SizedBox(height: 24),
+                const SizedBox(height: 20),
 
-              // ✅ Next Button
-              ElevatedButton(
-                onPressed: isValid ? widget.onNext : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isValid ? purple100 : Colors.grey,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                // Total Amount Input
+                TextFormField(
+                  initialValue: widget.totalAmount == 0.0 ? '' : widget.totalAmount.toString(),
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    hintText: 'Total Amount',
+                    hintStyle: TextStyle(color: dark100.withOpacity(0.5)),
+                    fillColor: light100,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: purple100, width: 2),
+                    ),
                   ),
+                  onChanged: (v) => widget.onTotalAmountChanged(double.tryParse(v) ?? 0),
                 ),
-                child: const Text('Next'),
-              ),
-            ],
+
+                const SizedBox(height: 24),
+
+                // Next Button
+                ElevatedButton(
+                  onPressed: isValid ? widget.onNext : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isValid ? purple100 : Colors.grey,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text('Next'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
