@@ -107,7 +107,6 @@ class Step3Result extends StatelessWidget {
                     child: const Text("View PDF"),
                   ),
 
-
                   ElevatedButton(
                     onPressed: onStartOver,
                     style: ElevatedButton.styleFrom(
