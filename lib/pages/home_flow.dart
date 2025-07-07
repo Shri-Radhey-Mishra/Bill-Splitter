@@ -179,7 +179,18 @@ class _HomeFlowState extends State<HomeFlow> {
                     groupName: groupName,
                     transactions: results,
                     onBack: () => setState(() => currentStep = 2),
-                    onStartOver: () => setState(() => currentStep = 0),
+                    onStartOver: () {
+                      nameControllers.clear();
+                      amountControllers.clear();
+                      selectedPeople.clear();
+                      results.clear();
+                      groupName = '';
+                      setState(() {
+                        currentStep = 0;
+                        numPeople = 1;
+                        totalAmount = 0.0;
+                      });
+                    },
                   ),
                   999 => const Center(
                     child: CircularProgressIndicator(color: purple100),
