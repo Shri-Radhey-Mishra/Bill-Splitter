@@ -11,6 +11,7 @@ class ExpenseSplitterApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Expense Splitter',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: light90,
         primaryColor: purple100,
